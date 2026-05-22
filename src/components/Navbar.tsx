@@ -40,7 +40,7 @@ const Navbar = () => {
         {/* Desktop Links */}
         <nav className="hidden md:flex items-center space-x-12">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href || (link.href.includes('#') && pathname === '/');
+            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.name}
