@@ -310,7 +310,7 @@ const ClubPageTemplate = ({ data }: Props) => {
           <h2 className="font-serif text-5xl text-primary tracking-tight mb-4">F.A.Q</h2>
           <div className="w-full h-px bg-rule mb-16" />
 
-          <div className="max-w-4xl">
+          <div>
             {data.faqs.map((faq, i) => (
               <div key={faq._id || i} className="border-b border-rule">
                 <button

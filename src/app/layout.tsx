@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import ChatBotProvider from "@/components/ChatBotProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased`}>
       <body className="font-sans min-h-screen bg-background text-foreground selection:bg-accent/30 selection:text-primary">
         {children}
+        <ChatBotProvider />
       </body>
     </html>
   );

@@ -144,11 +144,13 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
   return (
     <section className="py-32 bg-surface relative z-20 -mt-10 border-t-4 border-accent">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-16">
-        <div className="flex justify-between items-end pb-12">
-          <div>
-            <h2 className="font-serif text-4xl text-primary tracking-tight mb-2">Council Leadership</h2>
-            <p className="font-sans text-xs text-primary/40 uppercase tracking-widest">Hierarchy of Command</p>
-          </div>
+        {/* Section Header */}
+        <div className="sec-head mb-16">
+          <div className="sec-eyebrow">LEADERSHIP STRUCTURE</div>
+          <h2 className="sec-title">The Hierarchy</h2>
+          <p className="sec-sub">
+            A structured leadership model that connects faculty guidance with student leadership, ensuring coordination, accountability, execution, and growth across all committees and clubs.
+          </p>
         </div>
         <div className="w-full h-px bg-rule mb-20" />
 

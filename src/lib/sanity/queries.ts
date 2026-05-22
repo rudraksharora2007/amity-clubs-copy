@@ -92,6 +92,26 @@ export const queries = {
   }`,
 
   clubSlugs: `*[_type == "clubPage" && defined(slug.current)][].slug.current`,
+
+  allFaqs: `*[_type == "clubFaq"] | order(order asc) {
+    _id,
+    question,
+    answer,
+    keywords,
+    category,
+    order,
+    "clubName": club->name,
+    "clubSlug": club->slug.current
+  }`,
+
+  generalFaqs: `*[_type == "clubFaq" && !defined(club)] | order(order asc) {
+    _id,
+    question,
+    answer,
+    keywords,
+    category,
+    order
+  }`,
 };
 
 async function safeFetch<T>(query: string, params?: Record<string, any>): Promise<T> {
@@ -143,4 +163,12 @@ export async function fetchClubPageData(slug: string) {
 
 export async function fetchClubSlugs() {
   return safeFetch<string[]>(queries.clubSlugs);
+}
+
+export async function fetchAllFaqs() {
+  return safeFetch(queries.allFaqs);
+}
+
+export async function fetchGeneralFaqs() {
+  return safeFetch(queries.generalFaqs);
 }
