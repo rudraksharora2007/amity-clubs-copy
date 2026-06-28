@@ -7,6 +7,8 @@ import clubActivity from './clubActivity';
 import clubFaq from './clubFaq';
 import event from './event';
 import clubGalleryImage from './clubGalleryImage';
+import committeeSettings from './committeeSettings';
+import committeeLeader from './committeeLeader';
 
 export const schemaTypes = [
   leader,
@@ -18,4 +20,6 @@ export const schemaTypes = [
   clubFaq,
   event,
   clubGalleryImage,
+  committeeSettings,
+  committeeLeader,
 ];

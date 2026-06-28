@@ -7,6 +7,11 @@ interface Leader {
   role: string;
   bio: string;
   image?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  deptLabel?: string;
+  chipLabel?: string;
+  messageHeader?: string;
 }
 
 interface PersonCardProps {
@@ -77,8 +82,8 @@ const PersonCard = ({ leader, id, cardClass, topClass, avatarClass, initials, de
               <div className="mp-id-dept">{dept}</div>
               <div className="mp-chip">{chip}</div>
               <div className="mp-socials">
-                <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank">in</a>
-                <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank">𝕏</a>
+                <a className={`mp-soc ${!leader.linkedinUrl ? 'opacity-30 pointer-events-none' : ''}`} href={leader.linkedinUrl || '#'} onClick={(e) => e.stopPropagation()} target="_blank">in</a>
+                <a className={`mp-soc ${!leader.twitterUrl ? 'opacity-30 pointer-events-none' : ''}`} href={leader.twitterUrl || '#'} onClick={(e) => e.stopPropagation()} target="_blank">𝕏</a>
               </div>
             </div>
             <div className="mp-right">
@@ -118,8 +123,8 @@ const PersonCard = ({ leader, id, cardClass, topClass, avatarClass, initials, de
         </div>
         <div className="hc-dept">{dept}</div>
         <div className="hc-actions">
-          <button className="hc-btn hc-btn-li" onClick={(e) => e.stopPropagation()}>in LinkedIn</button>
-          <button className="hc-btn hc-btn-tw" onClick={(e) => e.stopPropagation()}>𝕏 Twitter</button>
+          <a className={`hc-btn hc-btn-li ${!leader.linkedinUrl ? 'opacity-50 pointer-events-none' : ''}`} href={leader.linkedinUrl || '#'} onClick={(e) => e.stopPropagation()} target="_blank">in LinkedIn</a>
+          <a className={`hc-btn hc-btn-tw ${!leader.twitterUrl ? 'opacity-50 pointer-events-none' : ''}`} href={leader.twitterUrl || '#'} onClick={(e) => e.stopPropagation()} target="_blank">𝕏 Twitter</a>
           <button className="hc-btn hc-btn-msg hc-msg-btn" onClick={(e) => e.stopPropagation()}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -164,9 +169,9 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
               topClass=""
               avatarClass="av-peach"
               initials="RA"
-              dept="Director, AIIT / Amity University, Noida"
-              chip="Ph.D. Computer Science"
-              messageHeader="Message from the Faculty Coordinator"
+                dept={coreLeadership[0].deptLabel || 'Director, AIIT / Amity University, Noida'}
+                chip={coreLeadership[0].chipLabel || 'Ph.D. Computer Science'}
+                messageHeader={coreLeadership[0].messageHeader || 'Message from the Faculty Coordinator'}
               isOpen={openCard === 'director'}
               onToggle={handleToggle}
             />
@@ -190,9 +195,9 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
                 topClass=""
                 avatarClass="av-orange"
                 initials="A1"
-                dept="Strategic Advisor / Amity University, Noida"
-                chip="Industry Guidance"
-                messageHeader="Message from the Advisor"
+                dept={coreLeadership[1].deptLabel || 'Strategic Advisor / Amity University, Noida'}
+                chip={coreLeadership[1].chipLabel || 'Industry Guidance'}
+                messageHeader={coreLeadership[1].messageHeader || 'Message from the Advisor'}
                 hoverSide="left"
                 isOpen={openCard === 'advisor1'}
                 onToggle={handleToggle}
@@ -207,9 +212,9 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
                 topClass=""
                 avatarClass="av-orange"
                 initials="A2"
-                dept="Strategic Advisor / Amity University, Noida"
-                chip="Academic Rigor"
-                messageHeader="Message from the Advisor"
+                dept={coreLeadership[2].deptLabel || 'Strategic Advisor / Amity University, Noida'}
+                chip={coreLeadership[2].chipLabel || 'Academic Rigor'}
+                messageHeader={coreLeadership[2].messageHeader || 'Message from the Advisor'}
                 isOpen={openCard === 'advisor2'}
                 onToggle={handleToggle}
               />
@@ -239,9 +244,9 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
                 topClass=""
                 avatarClass="av-blue"
                 initials="PS"
-                dept="Student Chief Coordinator / Amity University, Noida"
-                chip="Student Leadership"
-                messageHeader="Message from Student Chief Coordinator"
+                dept={coreLeadership[3].deptLabel || 'Student Chief Coordinator / Amity University, Noida'}
+                chip={coreLeadership[3].chipLabel || 'Student Leadership'}
+                messageHeader={coreLeadership[3].messageHeader || 'Message from Student Chief Coordinator'}
                 hoverSide="left"
                 isOpen={openCard === 'chief'}
                 onToggle={handleToggle}
@@ -256,9 +261,9 @@ export default function CommitteeLeadership({ coreLeadership }: { coreLeadership
                 topClass=""
                 avatarClass="av-green"
                 initials="DV"
-                dept="Student Co-Chief Coordinator / Amity University, Noida"
-                chip="Technical Infrastructure"
-                messageHeader="Message from Student Co-Chief Coordinator"
+                dept={coreLeadership[4].deptLabel || 'Student Co-Chief Coordinator / Amity University, Noida'}
+                chip={coreLeadership[4].chipLabel || 'Technical Infrastructure'}
+                messageHeader={coreLeadership[4].messageHeader || 'Message from Student Co-Chief Coordinator'}
                 isOpen={openCard === 'cochief'}
                 onToggle={handleToggle}
               />

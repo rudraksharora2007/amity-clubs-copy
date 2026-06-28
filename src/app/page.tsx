@@ -6,10 +6,41 @@ import EventsGallery from "@/components/EventsGallery";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { fetchHomepageLeaders, fetchDivisions, fetchEvents } from "@/lib/sanity/queries";
+import type { SanityLeader } from "@/lib/sanity/types";
+
+type HomeLeader = {
+  _id: string;
+  name: string;
+  role: string;
+  description: string;
+  order: number;
+  portrait?: unknown;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+};
+
+type HomeDivision = {
+  _id: string;
+  name: string;
+  slug: string;
+  subtitle: string;
+  divisionId: string;
+  stats: Array<{ value: string; label: string }>;
+  order: number;
+};
+
+type HomeEvent = {
+  _id: string;
+  title: string;
+  category: string;
+  date: string;
+  gridClass: string;
+  order: number;
+};
 
 export const revalidate = 60;
 
-const fallbackLeaders = [
+const fallbackLeaders: HomeLeader[] = [
   {
     _id: 'fallback-1',
     name: 'Prof. (Dr) Rekha Agarwal',
@@ -26,17 +57,21 @@ const fallbackLeaders = [
   },
   {
     _id: 'fallback-3',
-    name: 'Mr. Priyaank Sinha',
-    role: 'Student Chief Coordinator',
-    description: "Responsible for the execution of the committee's mandate on the ground floor. Ensures that every division operates efficiently, fostering an environment where students execute at a professional standard without compromise.",
+    name: 'Mr. Navneet Kumar',
+    role: 'Head, AIIT Student Committee',
+    description: "\"The people who are crazy enough to think they can change the world are the ones who do.\" — Steve Jobs\n\nI believe every student carries the spark of leadership, the drive to innovate, and the power to leave a lasting mark.\nAs Head of the AIIT Student Committee, I invite you to explore new opportunities, share your ideas, and become a part of this journey.\nTogether, let us learn, lead, and make a difference.",
     order: 2,
+    linkedinUrl: 'https://www.linkedin.com/in/navneetkumar1746',
+    twitterUrl: 'https://instagram.com/imnavneet_kr',
   },
   {
     _id: 'fallback-4',
-    name: 'Mr. Devansh',
-    role: 'Student Co-Chief Coordinator',
-    description: "Assists the Chief Coordinator in executing the committee's mandate. Drives operational efficiency and maintains the professional standard across all student divisions.",
+    name: 'Mr. Anurag',
+    role: 'Co-Head, AIIT Student Committee',
+    description: "Behind every great institution lies not its walls or infrastructure, but the passionate individuals who breathe life into its purpose. I believe each one of us holds the potential to lead, to innovate, and to create ripples of change that extend far beyond the present.\n\nAs Co-Head of the AIIT Student Committee, my commitment is simple — to stand with you, grow with you, and build a community rooted in collaboration and driven by purpose. Every idea you carry, every dream you nurture, has a place here.",
     order: 3,
+    linkedinUrl: 'https://www.linkedin.com/in/anurag-2512as',
+    twitterUrl: 'https://instagram.com/justt.anuragg',
   },
 ];
 
@@ -69,9 +104,9 @@ const fallbackDivisions = [
   },
   {
     _id: 'fallback-d3',
-    name: 'Networking',
+    name: 'Broadcast Storm',
     slug: 'networking',
-    subtitle: 'Infrastructure & Security',
+    subtitle: 'Cybersecurity & Networking',
     divisionId: '03',
     stats: [
       { value: '3', label: 'Active Subnets' },
@@ -125,12 +160,34 @@ const fallbackEvents = [
   },
 ];
 
+function mergeHomepageLeaders(leaders: SanityLeader[]) {
+  const merged = [...fallbackLeaders];
+
+  leaders.slice(0, fallbackLeaders.length).forEach((leader, index) => {
+    merged[index] = {
+      ...merged[index],
+      _id: leader._id,
+      name: leader.name || merged[index].name,
+      role: leader.role || merged[index].role,
+      description: leader.description || merged[index].description,
+      portrait: leader.portrait,
+      twitterUrl: leader.twitterUrl,
+      linkedinUrl: leader.linkedinUrl,
+      order: leader.order,
+    };
+  });
+
+  return merged;
+}
+
 export default async function Home() {
   const [leaders, divisions, events] = await Promise.all([
-    fetchHomepageLeaders() as Promise<any[]>,
-    fetchDivisions() as Promise<any[]>,
-    fetchEvents() as Promise<any[]>,
+    fetchHomepageLeaders(),
+    fetchDivisions() as Promise<HomeDivision[]>,
+    fetchEvents() as Promise<HomeEvent[]>,
   ]);
+
+  const homepageLeaders = mergeHomepageLeaders(leaders);
 
   return (
     <main className="relative bg-white pt-20">
@@ -183,7 +240,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <LeadershipSection leaders={leaders.length >= 2 ? leaders : fallbackLeaders} />
+      <LeadershipSection leaders={homepageLeaders} />
 
       <CommitteeCTA />
 

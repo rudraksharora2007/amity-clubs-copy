@@ -32,7 +32,9 @@ export default function SanityImage({
     );
   }
 
-  const imageUrl = urlFor(source)?.width(width || 800).height(height || 600).fit('crop').url();
+  const imageUrl = typeof source === 'string'
+    ? source
+    : urlFor(source)?.width(width || 800).height(height || 600).fit('crop').url();
 
   if (!imageUrl) {
     return (
@@ -48,8 +50,8 @@ export default function SanityImage({
     <Image
       src={imageUrl}
       alt={alt}
-      width={width}
-      height={height}
+      width={fill ? undefined : width || 800}
+      height={fill ? undefined : height || 600}
       fill={fill}
       className={className}
       sizes={sizes}

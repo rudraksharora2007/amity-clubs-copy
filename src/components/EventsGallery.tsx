@@ -19,6 +19,26 @@ const EventsGallery = ({ events }: { events: Event[] }) => {
     return null;
   }
 
+  const defaultGridClass = 'md:col-span-4 md:row-span-1';
+  const asymmetricPattern = [
+    'md:col-span-8 md:row-span-2',
+    'md:col-span-4 md:row-span-1',
+    'md:col-span-4 md:row-span-1',
+    'md:col-span-6 md:row-span-1',
+    'md:col-span-6 md:row-span-1',
+  ];
+
+  const hasCustomLayout = events.some(
+    (event) => event.gridClass && event.gridClass.trim() !== '' && event.gridClass !== defaultGridClass
+  );
+
+  const resolveGridClass = (event: Event, index: number) => {
+    if (hasCustomLayout && event.gridClass && event.gridClass.trim() !== '') {
+      return event.gridClass;
+    }
+    return asymmetricPattern[index % asymmetricPattern.length];
+  };
+
   return (
     <section className="relative border-b border-rule bg-surface z-10">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-16 py-32">
@@ -41,7 +61,7 @@ const EventsGallery = ({ events }: { events: Event[] }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`relative group overflow-hidden cursor-pointer ${event.gridClass}`}
+                className={`relative group overflow-hidden cursor-pointer ${resolveGridClass(event, index)}`}
               >
                 <div className="absolute inset-0 grayscale contrast-125 filter group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700">
                   {event.photo ? (

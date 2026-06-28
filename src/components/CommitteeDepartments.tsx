@@ -1,567 +1,113 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
+import type { SanityDepartment } from '@/lib/sanity/types';
 
-const departmentsData = [
-  {
-    name: "Computer Science",
-    shortName: "Comp. Sci.",
-    abbr: "CS",
-    president: {
-      name: "Arjun Sharma",
-      initials: "AS",
-      msg: "Leading CS department with focus on innovation and technical excellence."
-    },
-    vp: {
-      name: "Bhavna Tripathi",
-      initials: "BT"
-    }
-  },
-  {
-    name: "Information Technology",
-    shortName: "Info. Tech.",
-    abbr: "IT",
-    president: {
-      name: "Priya Rastogi",
-      initials: "PR",
-      msg: "Bridging technology and administration for seamless student experiences."
-    },
-    vp: {
-      name: "Qasim Ahmed",
-      initials: "QA"
-    }
-  },
-  {
-    name: "Electronics",
-    shortName: "Electronics",
-    abbr: "ECE",
-    president: {
-      name: "Karan Mishra",
-      initials: "KM",
-      msg: "Advancing electronics research through hands-on lab experiments."
-    },
-    vp: {
-      name: "Lavanya Nambiar",
-      initials: "LN"
-    }
-  },
-  {
-    name: "Mathematics",
-    shortName: "Mathematics",
-    abbr: "MA",
-    president: {
-      name: "Vandana Dubey",
-      initials: "VD",
-      msg: "Making mathematics approachable through collaborative problem solving."
-    },
-    vp: {
-      name: "Om Dikshit",
-      initials: "OD"
-    }
-  },
-  {
-    name: "Physics",
-    shortName: "Physics",
-    abbr: "PH",
-    president: {
-      name: "Rahul Singh",
-      initials: "RS",
-      msg: "Exploring the physical world through modern experimental methods."
-    },
-    vp: {
-      name: "Uma Farooq",
-      initials: "UF"
-    }
-  },
-  {
-    name: "Business Administration",
-    shortName: "Business",
-    abbr: "BA",
-    president: {
-      name: "Ananya Kapoor",
-      initials: "AK",
-      msg: "Connecting business acumen with emerging technology trends."
-    },
-    vp: {
-      name: "Yash Hemant",
-      initials: "YH"
-    }
-  },
-  {
-    name: "English & Comm.",
-    shortName: "English",
-    abbr: "EN",
-    president: {
-      name: "Tejas Nair",
-      initials: "TN",
-      msg: "Fostering clear communication in a diverse academic community."
-    },
-    vp: {
-      name: "Zara Joshi",
-      initials: "ZJ"
-    }
-  },
-  {
-    name: "Biotechnology",
-    shortName: "Biotech",
-    abbr: "BT",
-    president: {
-      name: "Mira Pillai",
-      initials: "MP",
-      msg: "Pioneering biotech research for a healthier future."
-    },
-    vp: {
-      name: "Waris Khan",
-      initials: "WK"
-    }
-  },
-  {
-    name: "Law",
-    shortName: "Law",
-    abbr: "LW",
-    president: {
-      name: "Saurabh Lal",
-      initials: "SL",
-      msg: "Advocating for student rights and legal literacy on campus."
-    },
-    vp: {
-      name: "Xena Lal",
-      initials: "XL"
-    }
-  },
-  {
-    name: "Architecture",
-    shortName: "Architecture",
-    abbr: "AR",
-    president: {
-      name: "Geeta Rajan",
-      initials: "GR",
-      msg: "Designing spaces that inspire creativity and functionality."
-    },
-    vp: {
-      name: "Vimal Mehta",
-      initials: "VM"
-    }
-  },
-  {
-    name: "Civil Engineering",
-    shortName: "Civil Eng.",
-    abbr: "CE",
-    president: {
-      name: "Harsh Dev",
-      initials: "HD",
-      msg: "Building sustainable infrastructure for tomorrow's challenges."
-    },
-    vp: {
-      name: "Uma Nair",
-      initials: "UN"
-    }
-  }
-];
+const themeClasses: Record<NonNullable<SanityDepartment['theme']>, string> = {
+  blue: 'border-blue-200 bg-blue-50/40',
+  green: 'border-emerald-200 bg-emerald-50/40',
+  red: 'border-rose-200 bg-rose-50/40',
+  teal: 'border-cyan-200 bg-cyan-50/40',
+  gold: 'border-amber-200 bg-amber-50/40',
+};
 
-export default function CommitteeDepartments({ departments }: { departments?: any[] }) {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [isMsgOpen, setIsMsgOpen] = useState(false);
+function initials(name: string): string {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+}
 
-  const activeDept = departmentsData[activeIdx];
+export default function CommitteeDepartments({ departments }: { departments: SanityDepartment[] }) {
+  const [openId, setOpenId] = useState<string | null>(null);
 
-  const handleNext = () => {
-    setIsMsgOpen(false);
-    setActiveIdx((prev) => (prev + 1) % departmentsData.length);
-  };
+  const sorted = useMemo(
+    () => [...departments].sort((a, b) => a.order - b.order),
+    [departments]
+  );
 
-  const handlePrev = () => {
-    setIsMsgOpen(false);
-    setActiveIdx((prev) => (prev === 0 ? departmentsData.length - 1 : prev - 1));
-  };
-
-  const handleSelectDept = (idx: number) => {
-    setIsMsgOpen(false);
-    setActiveIdx(idx);
-  };
+  if (sorted.length === 0) return null;
 
   return (
-    <section className="sec sec-white py-32 bg-white">
+    <section className="py-28 bg-white border-t border-rule">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-16">
-        <div className="sec-head">
-          <div className="sec-eyebrow">Departments</div>
-          <h2 className="sec-title">Active Departments</h2>
-          <p className="sec-sub">Click a department to view its team. Only one department is shown at a time.</p>
+        <div className="sec-head mb-12">
+          <div className="sec-eyebrow">Hierarchy of Command</div>
+          <h2 className="sec-title">Department Structure</h2>
+          <p className="sec-sub">Each department is led by a designated head and aligned with committee-wide execution standards.</p>
         </div>
 
-        {/* Tab system */}
-        <div className="dept-grid">
-          {departmentsData.map((d, i) => (
-            <button
-              key={i}
-              className={`dept-btn ${i === activeIdx ? 'active' : ''}`}
-              onClick={() => handleSelectDept(i)}
-            >
-              {d.shortName}
-            </button>
-          ))}
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {sorted.map((dept) => {
+            const isOpen = openId === dept._id;
+            const theme = themeClasses[dept.theme ?? 'blue'];
 
-        {/* Content Panel */}
-        <div
-          style={{
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            marginTop: '8px',
-            boxShadow: '0 4px 20px rgba(255, 192, 0, 0.06)',
-            background: '#ffffff'
-          }}
-        >
-          <div className="p-6 md:p-12" style={{ background: '#ffffff' }}>
-            
-            {/* Department Header */}
-            <div style={{ paddingBottom: '16px', borderBottom: '1.5px solid var(--border)', marginBottom: '32px' }}>
-              <div
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.18em',
-                  color: 'var(--accent)',
-                  textTransform: 'uppercase',
-                  marginBottom: '8px'
-                }}
-              >
-                {activeDept.abbr} — DEPARTMENT
-              </div>
-              <h3 className="font-serif text-4xl md:text-5xl text-primary leading-tight m-0 font-normal">
-                {activeDept.name}
-              </h3>
-            </div>
-
-            {/* Team Hierarchy Tree (Horizontal on desktop, vertical on mobile) */}
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-8 relative w-full max-w-4xl mx-auto">
-              
-              {/* President Section */}
-              <div className="flex flex-col items-center">
-                {/* President Header */}
-                <div
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    color: 'var(--accent)',
-                    textTransform: 'uppercase',
-                    marginBottom: '12px',
-                    textAlign: 'center'
-                  }}
-                >
-                  President
-                </div>
-
-                {/* President Card Wrap */}
-                <div className="person-wrap block mx-auto relative group">
-                  <div
-                    className={`person-card coord ${isMsgOpen ? 'open' : ''}`}
-                    onClick={() => setIsMsgOpen(prev => !prev)}
-                  >
-                    {/* Collapsed View */}
-                    <div className="card-collapsed">
-                      <div className="pc-top" style={{ background: 'linear-gradient(135deg,#1A4D7C,#0f2e52)' }}>
-                        <div className="avatar av-blue">{activeDept.president.initials}</div>
-                        <div className="pc-role">President</div>
-                        <div className="pc-name">{activeDept.president.name}</div>
-                      </div>
-                      <div className="pc-body">
-                        <div className="pc-dept">{activeDept.name} Department</div>
-                        <div className="pc-socials">
-                          <span className="soc-sm">in</span>
-                          <span className="soc-sm">𝕏</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Expanded View */}
-                    <div className="card-expanded">
-                      <div className="mp-inner">
-                        <div className="mp-left">
-                          <div className="mp-avatar av-blue">{activeDept.president.initials}</div>
-                          <div className="mp-id-name">{activeDept.president.name}</div>
-                          <div className="mp-id-role">President</div>
-                          <div className="mp-id-dept">{activeDept.name} Department</div>
-                          <div className="mp-chip">Leadership</div>
-                          <div className="mp-socials">
-                            <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">in</a>
-                            <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">𝕏</a>
-                          </div>
-                        </div>
-                        <div className="mp-right">
-                          <div className="mp-eyebrow">Message from President</div>
-                          <div className="mp-bar" />
-                          <div className="mp-qmark">“</div>
-                          <div className="mp-quote">
-                            {activeDept.president.msg}
-                          </div>
-                          <div className="mp-footer">
-                            <div className="mp-attr">— {activeDept.president.name}</div>
-                            <button
-                              className="mp-close"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setIsMsgOpen(false);
-                              }}
-                            >
-                              ← Close
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover Card (Desktop Only) */}
-                  <div className="hover-card" onClick={() => setIsMsgOpen(prev => !prev)}>
-                    <div className="hc-top">
-                      <div className="hc-av av-blue">{activeDept.president.initials}</div>
-                      <div className="text-left">
-                        <div className="hc-name">{activeDept.president.name}</div>
-                        <div className="hc-role-lbl">President</div>
-                      </div>
-                    </div>
-                    <div className="hc-dept">{activeDept.name} Department</div>
-                    <div className="hc-actions">
-                      <button
-                        className="hc-btn hc-btn-li"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open('#', '_blank');
-                        }}
-                      >
-                        in LinkedIn
-                      </button>
-                      <button
-                        className="hc-btn hc-btn-tw"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open('#', '_blank');
-                        }}
-                      >
-                        𝕏 Twitter
-                      </button>
-                      <button
-                        className="hc-btn hc-btn-msg hc-msg-btn flex items-center justify-center gap-1.5"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsMsgOpen(prev => !prev);
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                        </svg>
-                        Read Message
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Simple Vertical Yellow Line Divider */}
-              <div className="w-0.5 h-12 bg-accent opacity-80" />
-
-              {/* Vice President Section */}
-              <div className="flex flex-col items-center">
-                {/* Vice President Header */}
-                <div
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    color: 'var(--accent)',
-                    textTransform: 'uppercase',
-                    marginBottom: '12px',
-                    textAlign: 'center'
-                  }}
-                >
-                  Vice President
-                </div>
-
-                {/* Vice President Card Wrap */}
-                <div className="person-wrap hover-left block mx-auto relative group">
-                  <div
-                    className="person-card coord"
-                    style={{
-                      cursor: 'default',
-                      margin: '0 auto',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                    }}
-                  >
-                    <div className="pc-top" style={{ background: 'linear-gradient(135deg,#155A38,#0b3b25)' }}>
-                      <div className="avatar av-green">{activeDept.vp.initials}</div>
-                      <div className="pc-role">Vice President</div>
-                      <div className="pc-name">{activeDept.vp.name}</div>
-                    </div>
-                    <div className="pc-body">
-                      <div className="pc-dept">{activeDept.name} Department</div>
-                      <div className="pc-socials">
-                        <span
-                          className="soc-sm cursor-pointer"
-                          onClick={() => window.open('#', '_blank')}
-                        >
-                          in
-                        </span>
-                        <span
-                          className="soc-sm cursor-pointer"
-                          onClick={() => window.open('#', '_blank')}
-                        >
-                          𝕏
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hover Card (Desktop Only) */}
-                  <div className="hover-card" style={{ cursor: 'default' }}>
-                    <div className="hc-top">
-                      <div className="hc-av av-green">{activeDept.vp.initials}</div>
-                      <div className="text-left">
-                        <div className="hc-name">{activeDept.vp.name}</div>
-                        <div className="hc-role-lbl">Vice President</div>
-                      </div>
-                    </div>
-                    <div className="hc-dept">{activeDept.name} Department</div>
-                    <div className="hc-actions">
-                      <button
-                        className="hc-btn hc-btn-li"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open('#', '_blank');
-                        }}
-                      >
-                        in LinkedIn
-                      </button>
-                      <button
-                        className="hc-btn hc-btn-tw"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open('#', '_blank');
-                        }}
-                      >
-                        𝕏 Twitter
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* MESSAGE ACCORDION PANEL (Centers beautifully below cards) */}
-            <div className={`msg-panel mx-auto ${isMsgOpen ? 'open' : ''}`} style={{ marginTop: '24px', width: '100%' }}>
-              <div className="mp-inner">
-                <div className="mp-left">
-                  <div className="mp-avatar av-blue">{activeDept.president.initials}</div>
-                  <div className="mp-id-name">{activeDept.president.name}</div>
-                  <div className="mp-id-role">President</div>
-                  <div className="mp-id-dept">{activeDept.name} Department</div>
-                  <div className="mp-chip">Leadership</div>
-                  <div className="mp-socials">
-                    <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">in</a>
-                    <a className="mp-soc" href="#" onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">𝕏</a>
-                  </div>
-                </div>
-                <div className="mp-right">
-                  <div className="mp-eyebrow">Message from President</div>
-                  <div className="mp-bar" />
-                  <div className="mp-qmark">“</div>
-                  <div className="mp-quote">
-                    "{activeDept.president.msg}"
-                  </div>
-                  <div className="mp-footer">
-                    <div className="mp-attr">— {activeDept.president.name}</div>
-                    <button
-                      className="mp-close"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsMsgOpen(false);
-                      }}
-                    >
-                      ← Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Row with navigation buttons */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingTop: '24px',
-                borderTop: '1.5px solid var(--border)',
-                marginTop: '32px',
-                flexWrap: 'wrap',
-                gap: '16px'
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.18em',
-                  color: '#64748B',
-                  textTransform: 'uppercase'
-                }}
-              >
-                AIIT · AMITY UNIVERSITY
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
+            return (
+              <article key={dept._id} className={`border ${theme} transition-colors`}>
                 <button
-                  className="hc-btn"
-                  style={{
-                    border: '1.5px solid var(--border)',
-                    background: '#ffffff',
-                    color: 'var(--primary)',
-                    fontWeight: 700,
-                    padding: '8px 20px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: '0.75rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    transition: 'all 0.2s'
-                  }}
-                  onClick={handlePrev}
+                  onClick={() => setOpenId(isOpen ? null : dept._id)}
+                  className="w-full text-left p-5"
                 >
-                  Previous
-                </button>
-                <button
-                  className="hc-btn"
-                  style={{
-                    border: '1.5px solid var(--border)',
-                    background: '#ffffff',
-                    color: 'var(--primary)',
-                    fontWeight: 700,
-                    padding: '8px 20px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: '0.75rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    transition: 'all 0.2s'
-                  }}
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="font-sans text-[10px] uppercase tracking-[0.22em] text-primary/45 mb-1">
+                        Department {dept.departmentId}
+                      </p>
+                      <h3 className="font-serif text-2xl text-primary leading-tight">{dept.name}</h3>
+                    </div>
+                    <span className="font-sans text-xs text-primary/40">{isOpen ? '−' : '+'}</span>
+                  </div>
 
-          </div>
+                  <div className="mt-4 border-t border-primary/10 pt-4 flex items-center gap-3">
+                    <div className="w-10 h-10 border border-primary/20 flex items-center justify-center font-sans text-xs font-bold text-primary/70">
+                      {initials(dept.departmentHead)}
+                    </div>
+                    <div>
+                      <p className="font-sans text-[10px] uppercase tracking-widest text-primary/45">
+                        {dept.headRole || 'Department Head'}
+                      </p>
+                      <p className="font-sans text-sm text-primary/80">{dept.departmentHead}</p>
+                    </div>
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div className="px-5 pb-5">
+                    {dept.headMessage && (
+                      <p className="font-sans text-sm leading-7 text-primary/70 border-t border-primary/10 pt-4">
+                        {dept.headMessage}
+                      </p>
+                    )}
+
+                    {dept.coHeads && dept.coHeads.length > 0 && (
+                      <div className="mt-4 border-t border-primary/10 pt-4">
+                        <p className="font-sans text-[10px] uppercase tracking-widest text-primary/45 mb-2">Co-Heads</p>
+                        <p className="font-sans text-sm text-primary/75">{dept.coHeads.join(' • ')}</p>
+                      </div>
+                    )}
+
+                    {(dept.headLinkedinUrl || dept.headTwitterUrl) && (
+                      <div className="mt-4 flex gap-2">
+                        {dept.headLinkedinUrl && (
+                          <a className="font-sans text-xs px-3 py-1 border border-primary/20 text-primary/70 hover:text-primary" href={dept.headLinkedinUrl} target="_blank" rel="noreferrer">
+                            LinkedIn
+                          </a>
+                        )}
+                        {dept.headTwitterUrl && (
+                          <a className="font-sans text-xs px-3 py-1 border border-primary/20 text-primary/70 hover:text-primary" href={dept.headTwitterUrl} target="_blank" rel="noreferrer">
+                            X
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
-
       </div>
     </section>
   );

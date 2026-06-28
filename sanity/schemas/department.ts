@@ -25,6 +25,50 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'headRole',
+      title: 'Department Head Role',
+      type: 'string',
+      initialValue: 'Department Head',
+    }),
+    defineField({
+      name: 'headMessage',
+      title: 'Department Head Message',
+      type: 'text',
+      rows: 4,
+    }),
+    defineField({
+      name: 'headPortrait',
+      title: 'Department Head Portrait',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'headLinkedinUrl',
+      title: 'Department Head LinkedIn URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'headTwitterUrl',
+      title: 'Department Head Twitter / X URL',
+      type: 'url',
+    }),
+    defineField({
+      name: 'theme',
+      title: 'Card Theme',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Blue', value: 'blue' },
+          { title: 'Green', value: 'green' },
+          { title: 'Red', value: 'red' },
+          { title: 'Teal', value: 'teal' },
+          { title: 'Gold', value: 'gold' },
+        ],
+        layout: 'dropdown',
+      },
+      initialValue: 'blue',
+    }),
+    defineField({
       name: 'coHeads',
       title: 'Co-Heads',
       type: 'array',

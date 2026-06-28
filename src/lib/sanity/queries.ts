@@ -1,4 +1,10 @@
 import { client } from './client';
+import type {
+  CommitteeSettings,
+  SanityCommitteeLeader,
+  SanityDepartment,
+  SanityLeader,
+} from './types';
 
 export const queries = {
   homepageLeaders: `*[_type == "leader"] | order(order asc) {
@@ -17,7 +23,45 @@ export const queries = {
     name,
     departmentId,
     departmentHead,
+    headRole,
+    headMessage,
+    headPortrait,
+    headLinkedinUrl,
+    headTwitterUrl,
     coHeads,
+    theme,
+    order
+  }`,
+
+  committeeSettings: `*[_type == "committeeSettings"][0] {
+    _id,
+    heroEyebrow,
+    heroTitleLine1,
+    heroTitleLine2,
+    heroTitleLine3,
+    heroDescription,
+    officerCountLabel,
+    purposeEyebrow,
+    purposeTitle,
+    visionBody,
+    missionBody,
+    mottoLine1,
+    mottoLine2,
+    ctaTitle,
+    ctaButtonLabel
+  }`,
+
+  committeeLeaders: `*[_type == "committeeLeader"] | order(order asc) {
+    _id,
+    name,
+    role,
+    bio,
+    deptLabel,
+    chipLabel,
+    messageHeader,
+    portrait,
+    linkedinUrl,
+    twitterUrl,
     order
   }`,
 
@@ -114,17 +158,26 @@ export const queries = {
   }`,
 };
 
-async function safeFetch<T>(query: string, params?: Record<string, any>): Promise<T> {
+async function safeFetch<T>(query: string, params?: Record<string, unknown>): Promise<T> {
   if (!client) return [] as T;
   return client.fetch(query, params);
 }
 
 export async function fetchHomepageLeaders() {
-  return safeFetch(queries.homepageLeaders);
+  return safeFetch<SanityLeader[]>(queries.homepageLeaders);
 }
 
 export async function fetchDepartments() {
-  return safeFetch(queries.departments);
+  return safeFetch<SanityDepartment[]>(queries.departments);
+}
+
+export async function fetchCommitteeSettings() {
+  if (!client) return null;
+  return client.fetch<CommitteeSettings | null>(queries.committeeSettings);
+}
+
+export async function fetchCommitteeLeaders() {
+  return safeFetch<SanityCommitteeLeader[]>(queries.committeeLeaders);
 }
 
 export async function fetchDivisions() {
